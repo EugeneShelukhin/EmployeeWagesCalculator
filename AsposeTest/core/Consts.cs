@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AsposeTest
+﻿namespace AsposeTest
 {
     public static class AnnualIncreasePercentage
     {
@@ -24,4 +20,8 @@ namespace AsposeTest
         public const float Manager = 40f;
     }
 
+    public static class WageRates
+    {
+        public const decimal BaseWage = 100000m;//some number
+    }
 }
