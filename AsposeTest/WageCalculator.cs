@@ -17,7 +17,7 @@ namespace AsposeTest
 
         public decimal GetFullWageSum(DateTime date)
         {
-            return _workersRepository.GetAll().Sum(worker => CalculateWorkersWage(date, worker));//join _workerWageCache
+            return _workersRepository.GetAll().AsParallel().Sum(worker => CalculateWorkersWage(date, worker));//join _workerWageCache
         }
 
         public decimal GetWageOfWorker(long Id, DateTime date)
@@ -59,7 +59,6 @@ namespace AsposeTest
                 default:
                     throw new NotImplementedException();
             }
-
 
             var annualIncreasePercentage = annualPercent * GetWorkerExperience(date, worker);
             annualIncreasePercentage = annualIncreasePercentage < maxPercent? annualIncreasePercentage : maxPercent;
