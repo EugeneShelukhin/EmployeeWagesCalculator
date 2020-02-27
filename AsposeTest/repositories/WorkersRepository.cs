@@ -4,6 +4,7 @@ using AsposeTest.enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace AsposeTest
 {
@@ -23,6 +24,7 @@ namespace AsposeTest
         private readonly IDataContext _context;
         private readonly IIdentifiersCounter _identifiersCounter;
         private readonly ICustomCache<Worker[]> _subordinatesCache;
+        private ReaderWriterLockSlim RWLock = new ReaderWriterLockSlim();
         public WorkersRepository(IDataContext context, IIdentifiersCounter identifiersCounter, ICustomCache<Worker[]> subordinatesCache)
         {
             _context = context;
@@ -30,81 +32,136 @@ namespace AsposeTest
             _subordinatesCache = subordinatesCache;
         }
 
+
         public long AddEmployee(long? chiefId, string name, DateTime? emploumentDate)
         {
-            var id = _identifiersCounter.IssueNewIdentifier();
-            _context.WorkersCollection.Add(new Worker()
+            RWLock.EnterWriteLock();
+            try
             {
-                Id = id,
-                ChiefId = chiefId,
-                Name = name,
-                Role = RolesEnum.Employee,
-                BasicWageRate = WageRates.BaseWage,
-                DateOfEmployment = emploumentDate ?? DateTime.Now
-            });
-            return id;
+                var id = _identifiersCounter.IssueNewIdentifier();
+                _context.WorkersCollection.Add(new Worker()
+                {
+                    Id = id,
+                    ChiefId = chiefId,
+                    Name = name,
+                    Role = RolesEnum.Employee,
+                    BasicWageRate = WageRates.BaseWage,
+                    DateOfEmployment = emploumentDate ?? DateTime.Now
+                });
+                return id;
+            }
+            finally
+            {
+                RWLock.ExitWriteLock();
+            }
         }
 
         public long AddManager(long? chiefId, string name, DateTime? emploumentDate, long[] subordinates = null)
         {
-            var id = _identifiersCounter.IssueNewIdentifier();
-            _context.WorkersCollection.Add(new Worker()
+            RWLock.EnterWriteLock();
+            try
             {
-                Id = id,
-                ChiefId = chiefId,
-                Name = name,
-                Role = RolesEnum.Manager,
-                BasicWageRate = WageRates.BaseWage,
-                DateOfEmployment = emploumentDate ?? DateTime.Now
-            });
+                var id = _identifiersCounter.IssueNewIdentifier();
+                _context.WorkersCollection.Add(new Worker()
+                {
+                    Id = id,
+                    ChiefId = chiefId,
+                    Name = name,
+                    Role = RolesEnum.Manager,
+                    BasicWageRate = WageRates.BaseWage,
+                    DateOfEmployment = emploumentDate ?? DateTime.Now
+                });
 
-            //TODO bind subordinates
+                //TODO bind subordinates
 
-            //TODO inject calculate wage logic
+                //TODO inject calculate wage logic
 
-            return id;
+                return id;
+            }
+            finally
+            {
+                RWLock.ExitWriteLock();
+            }
         }
 
         public long AddSales(long? chiefId, string name, DateTime? emploumentDate, long[] subordinates = null)
         {
-            var id = _identifiersCounter.IssueNewIdentifier();
-            _context.WorkersCollection.Add(new Worker()
+            RWLock.EnterWriteLock();
+            try
             {
-                Id = id,
-                ChiefId = chiefId,
-                Name = name,
-                Role = RolesEnum.Sales,
-                BasicWageRate = WageRates.BaseWage,
-                DateOfEmployment = emploumentDate ?? DateTime.Now
-            });
+                var id = _identifiersCounter.IssueNewIdentifier();
+                _context.WorkersCollection.Add(new Worker()
+                {
+                    Id = id,
+                    ChiefId = chiefId,
+                    Name = name,
+                    Role = RolesEnum.Sales,
+                    BasicWageRate = WageRates.BaseWage,
+                    DateOfEmployment = emploumentDate ?? DateTime.Now
+                });
 
-            //TODO bind subordinates
+                //TODO bind subordinates
 
-            //TODO inject calculate wage logic
-            return id;
+                //TODO inject calculate wage logic
+                return id;
+            }
+            finally
+            {
+                RWLock.ExitWriteLock();
+            }
         }
 
         public IEnumerable<Worker> GetAll() => _context.WorkersCollection;
-        public Worker GetById(long id) => _context.WorkersCollection.First(worker => worker.Id == id);
-        public Worker[] GetSubordinatesOfFirstLevel(long Id) => _context.WorkersCollection.Where(w => w.ChiefId == Id).ToArray();
+        public Worker GetById(long id)
+        {
+            RWLock.EnterReadLock();
+            try
+            {
+                return _context.WorkersCollection.First(worker => worker.Id == id);
+            }
+            finally
+            {
+                RWLock.ExitReadLock();
+            }
+        }
+        public Worker[] GetSubordinatesOfFirstLevel(long Id)
+        {
+            RWLock.EnterReadLock();
+            try
+            {
+                return _context.WorkersCollection.Where(w => w.ChiefId == Id).ToArray();
+            }
+            finally
+            {
+                RWLock.ExitReadLock();
+            }
+        }
 
         public Worker[] GetSubordinatesOfAllLevels(long Id)
         {
-            List<Worker> result = new List<Worker>();
-            RecurcivelyGetSubordinates(Id, result);
-            return result.Distinct().ToArray();
+            RWLock.EnterReadLock();
+            try
+            {
+                List<Worker> result = new List<Worker>();
+                RecurcivelyGetSubordinates(Id, result);
+                return result.Distinct().ToArray();
+            }
+            finally
+            {
+                RWLock.ExitReadLock();
+            }
         }
 
         private void RecurcivelyGetSubordinates(long id, List<Worker> result)
         {
             if (!_subordinatesCache.Get(id, out var subordinates))
-            { 
+            {
                 subordinates = _context.WorkersCollection.Where(w => w.ChiefId == id).ToArray();
                 _subordinatesCache.Add(id, subordinates);
             }
 
             if (subordinates == null)
-            { 
+            {
                 return;
             }
 
@@ -113,6 +170,10 @@ namespace AsposeTest
                 RecurcivelyGetSubordinates(s.Id, result);
             }
             result.AddRange(subordinates);
+        }
+        ~WorkersRepository()
+        {
+            if (RWLock != null) RWLock.Dispose();
         }
     }
 }
