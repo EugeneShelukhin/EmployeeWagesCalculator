@@ -19,7 +19,7 @@ namespace AsposeTest.cache
             cacheLock.EnterWriteLock();
             try
             {
-                _cache.Add(id, value);
+                _cache.TryAdd(id, value);
             }
             finally
             {

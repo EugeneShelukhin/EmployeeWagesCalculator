@@ -124,17 +124,22 @@ namespace AsposeTest
                 RWLock.ExitReadLock();
             }
         }
-        public Worker[] GetSubordinatesOfFirstLevel(long Id)
+        public Worker[] GetSubordinatesOfFirstLevel(long id)
         {
-            RWLock.EnterReadLock();
-            try
+            if (!_subordinatesCache.Get(id, out var subordinates))
             {
-                return _context.WorkersCollection.Where(w => w.ChiefId == Id).ToArray();
+                RWLock.EnterReadLock();
+                try
+                {
+                    subordinates = _context.WorkersCollection.Where(w => w.ChiefId == id).ToArray();
+                    _subordinatesCache.Add(id, subordinates);
+                }
+                finally
+                {
+                    RWLock.ExitReadLock();
+                }
             }
-            finally
-            {
-                RWLock.ExitReadLock();
-            }
+            return subordinates;
         }
 
         public Worker[] GetSubordinatesOfAllLevels(long Id)
