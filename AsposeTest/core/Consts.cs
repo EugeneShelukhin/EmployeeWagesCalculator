@@ -1,5 +1,6 @@
 ﻿namespace AsposeTest
 {
+    //TODO make values below configurable
     public static class AnnualIncreasePercentage
     {
         public const float Employee = 3f;

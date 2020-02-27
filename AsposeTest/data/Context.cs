@@ -4,8 +4,15 @@ using System.Text;
 
 namespace AsposeTest.data
 {
-    public class Context
+    public interface IDataContext
     {
-        public static List<Worker> WorkersCollection = new List<Worker>();
+        List<Worker> WorkersCollection { get; set; }//TODO List to concurrent dictionary
+    }
+
+    public class DataContext : IDataContext
+    {
+        public DataContext() => WorkersCollection = new List<Worker>();
+
+        public List<Worker> WorkersCollection { get; set; }
     }
 }
