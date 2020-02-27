@@ -28,7 +28,7 @@ namespace Tests
 
             //assert
             Assert.That(oneByOneSum, Is.EqualTo(fullWageSum));
-            Assert.That(oneByOneSum,  Is.EqualTo(826000));
+            Assert.That(Math.Round(oneByOneSum, 2),  Is.EqualTo(825155.03));
         }
     }
 }

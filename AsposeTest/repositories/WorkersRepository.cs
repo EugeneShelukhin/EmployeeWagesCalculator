@@ -50,7 +50,7 @@ namespace AsposeTest
                 Id = id,
                 ChiefId = chiefId,
                 Name = name,
-                Role = RolesEnum.Employee,
+                Role = RolesEnum.Manager,
                 BasicWageRate = WageRates.BaseWage,
                 DateOfEmployment = emploumentDate ?? DateTime.Now
             });
@@ -70,7 +70,7 @@ namespace AsposeTest
                 Id = id,
                 ChiefId = chiefId,
                 Name = name,
-                Role = RolesEnum.Employee,
+                Role = RolesEnum.Sales,
                 BasicWageRate = WageRates.BaseWage,
                 DateOfEmployment = emploumentDate ?? DateTime.Now
             });

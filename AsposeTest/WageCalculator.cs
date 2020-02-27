@@ -29,29 +29,31 @@ namespace AsposeTest
                     {
                         var annualIncreasePercentage = AnnualIncreasePercentage.Employee * GetWorkerExperience(date, worker);
                         annualIncreasePercentage = annualIncreasePercentage < MaxAnnualIncreasePercentage.Employee ? annualIncreasePercentage : MaxAnnualIncreasePercentage.Employee;
-                        return worker.BasicWageRate + worker.BasicWageRate * (decimal)annualIncreasePercentage / 100;
+                        var wageWithExperience = worker.BasicWageRate * (1 + ((decimal)annualIncreasePercentage / 100));
+                        return wageWithExperience;
                     }
 
                     break;
                 case RolesEnum.Manager:
                     {
                         var annualIncreasePercentage = AnnualIncreasePercentage.Manager * GetWorkerExperience(date, worker);
-                        annualIncreasePercentage = annualIncreasePercentage < MaxAnnualIncreasePercentage.Manager ? annualIncreasePercentage : MaxAnnualIncreasePercentage.Employee;
+                        annualIncreasePercentage = annualIncreasePercentage < MaxAnnualIncreasePercentage.Manager ? annualIncreasePercentage : MaxAnnualIncreasePercentage.Manager;
+                        var wageWithExperience = worker.BasicWageRate * (1 + ((decimal)annualIncreasePercentage / 100));
 
                         var SubordinatesSumSalary = _workersRepository.GetSubordinatesOfFirstLevel(worker.Id).Sum(x => CalculateWorkersWage(date, x));
-                        var increaseForSubordinates = SubordinatesSumSalary * (decimal)SubordinatesIncreasePercentage.Manager;
-                        return worker.BasicWageRate + worker.BasicWageRate * (decimal)annualIncreasePercentage / 100;
+                        var increaseForSubordinates = SubordinatesSumSalary * ((decimal)SubordinatesIncreasePercentage.Manager / 100);
+                        return wageWithExperience + increaseForSubordinates;
                     }
-
                     break;
                 case RolesEnum.Sales:
                     {
                         var annualIncreasePercentage = AnnualIncreasePercentage.Sales * GetWorkerExperience(date, worker);
-                        annualIncreasePercentage = annualIncreasePercentage < MaxAnnualIncreasePercentage.Sales ? annualIncreasePercentage : MaxAnnualIncreasePercentage.Employee;
+                        annualIncreasePercentage = annualIncreasePercentage < MaxAnnualIncreasePercentage.Sales ? annualIncreasePercentage : MaxAnnualIncreasePercentage.Sales;
+                        var wageWithExperience = worker.BasicWageRate * (1 + ((decimal)annualIncreasePercentage / 100));
 
                         var SubordinatesSumSalary = _workersRepository.GetSubordinatesOfAllLevels(worker.Id).Sum(x => CalculateWorkersWage(date, x));
-                        var increaseForSubordinates = SubordinatesSumSalary * (decimal)SubordinatesIncreasePercentage.Sales;
-                        return worker.BasicWageRate + worker.BasicWageRate * (decimal)annualIncreasePercentage / 100;
+                        var increaseForSubordinates = SubordinatesSumSalary *  ((decimal)SubordinatesIncreasePercentage.Sales / 100);
+                        return wageWithExperience + increaseForSubordinates;
                     }
                     break;
                 default:

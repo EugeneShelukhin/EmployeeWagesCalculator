@@ -17,8 +17,8 @@
 
     public static class SubordinatesIncreasePercentage
     {
-        public const float Sales = 0.5f;
-        public const float Manager = 40f;
+        public const float Sales = 0.3f;
+        public const float Manager = 0.5f;
     }
 
     public static class WageRates
