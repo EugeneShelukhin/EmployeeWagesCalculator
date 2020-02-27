@@ -3,7 +3,7 @@ using System;
 
 namespace AsposeTest
 {
-    public class Worker
+    public struct Worker
     {
         public long Id { get; set; }
         public string Name { get; set; }
