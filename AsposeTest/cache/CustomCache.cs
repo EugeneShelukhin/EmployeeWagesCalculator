@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 
 namespace AsposeTest.cache
 {
@@ -10,15 +11,32 @@ namespace AsposeTest.cache
 
     public class CustomCache<T> : ICustomCache<T>
     {
+        private ReaderWriterLockSlim cacheLock = new ReaderWriterLockSlim();
         Dictionary<long, T> _cache { get; set; } = new Dictionary<long, T>();
 
         public void Add(long id, T value)
         {
-            _cache.Add(id, value);
+            cacheLock.EnterWriteLock();
+            try
+            {
+                _cache.Add(id, value);
+            }
+            finally
+            {
+                cacheLock.ExitWriteLock();
+            }
         }
         public bool Get(long id, out T value)
         {
-            return _cache.TryGetValue(id, out value);
+            cacheLock.EnterReadLock();
+            var isExists = _cache.TryGetValue(id, out value);
+            cacheLock.ExitReadLock();
+            return isExists;
+        }
+
+        ~CustomCache()
+        {
+            if (cacheLock != null) cacheLock.Dispose();
         }
     }
 }

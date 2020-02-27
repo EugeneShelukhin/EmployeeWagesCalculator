@@ -12,7 +12,6 @@ namespace AsposeTest
         static void Main(string[] args)
         {
 
-
             //deep hierarchy
             var dataContext = new DataContext();
             var idCounter = new IdentifiersCounter(dataContext);
@@ -39,7 +38,7 @@ namespace AsposeTest
             var workers = repository.GetAll();
             var workerWagesCache = new CustomCache<decimal>();
             var wageCalculator = new WageCalculator(repository, workerWagesCache);
-            var fullWageSum = wageCalculator.GetFullWageSum(date);
+            var fullWageSum = wageCalculator.GetFullWageSum(date);//4126261777.51122500000000M
         }
     }
 }
