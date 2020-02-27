@@ -2,6 +2,7 @@ using AsposeTest;
 using NUnit.Framework;
 using System;
 using System.Globalization;
+using System.Linq;
 
 namespace Tests
 {
@@ -13,12 +14,21 @@ namespace Tests
             LoadWorkers();
         }
 
+        //подсчитываем зарплаты каждого и сравниваем со значением общей зарплаты
         [Test]
         public void Test1()
         {
+            //arrange
+            var date = DateTime.ParseExact("2020-02-24", "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            var workers = repository.GetAll();
+            //act
             var wageCalculator = new WageCalculator(base.repository);
-            var result = wageCalculator.GetFullWageSum(DateTime.ParseExact("2020-02-24", "yyyy-MM-dd", CultureInfo.InvariantCulture));
-            Assert.That(result,  Is.EqualTo(result));
+            var oneByOneSum=workers.Sum(worker => wageCalculator.CalculateWorkersWage(date, worker));
+            var fullWageSum = wageCalculator.GetFullWageSum(date);
+
+            //assert
+            Assert.That(oneByOneSum, Is.EqualTo(fullWageSum));
+            Assert.That(oneByOneSum,  Is.EqualTo(826000));
         }
     }
 }
