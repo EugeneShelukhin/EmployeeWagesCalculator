@@ -1,4 +1,5 @@
-﻿using AsposeTest.data;
+﻿using AsposeTest.cache;
+using AsposeTest.data;
 using AsposeTest.enums;
 using System;
 using System.Collections.Generic;
@@ -21,10 +22,12 @@ namespace AsposeTest
     {
         private readonly IDataContext _context;
         private readonly IIdentifiersCounter _identifiersCounter;
-        public WorkersRepository(IDataContext context, IIdentifiersCounter identifiersCounter)
+        private readonly ICustomCache<Worker[]> _subordinatesCache;
+        public WorkersRepository(IDataContext context, IIdentifiersCounter identifiersCounter, ICustomCache<Worker[]> subordinatesCache)
         {
             _context = context;
             _identifiersCounter = identifiersCounter;
+            _subordinatesCache = subordinatesCache;
         }
 
         public long AddEmployee(long? chiefId, string name, DateTime? emploumentDate)
@@ -92,12 +95,18 @@ namespace AsposeTest
             return result.Distinct().ToArray();
         }
 
-        private void RecurcivelyGetSubordinates(long Id, List<Worker> result)
+        private void RecurcivelyGetSubordinates(long id, List<Worker> result)
         {
+            if (!_subordinatesCache.Get(id, out var subordinates))
+            { 
+                subordinates = _context.WorkersCollection.Where(w => w.ChiefId == id).ToArray();
+                _subordinatesCache.Add(id, subordinates);
+            }
 
-            var subordinates = _context.WorkersCollection.Where(w => w.ChiefId == Id).ToArray();
             if (subordinates == null)
+            { 
                 return;
+            }
 
             foreach (var s in subordinates)
             {

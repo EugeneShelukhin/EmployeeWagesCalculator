@@ -1,4 +1,5 @@
 ﻿using AsposeTest;
+using AsposeTest.cache;
 using AsposeTest.data;
 using System;
 using System.Globalization;
@@ -14,7 +15,8 @@ namespace Tests
         {
             dataContext = new DataContext();
             idCounter = new IdentifiersCounter(dataContext);
-            repository = new WorkersRepository(dataContext, idCounter);
+            var subordinatesCache = new CustomCache<Worker[]>();
+            repository = new WorkersRepository(dataContext, idCounter, subordinatesCache);
         }
 
 

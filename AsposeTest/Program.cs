@@ -16,7 +16,8 @@ namespace AsposeTest
             //deep hierarchy
             var dataContext = new DataContext();
             var idCounter = new IdentifiersCounter(dataContext);
-            var repository = new WorkersRepository(dataContext, idCounter);
+            var subordinatesCache = new CustomCache<Worker[]>();
+            var repository = new WorkersRepository(dataContext, idCounter, subordinatesCache);
 
             var johnId = repository.AddManager(null, "John Doe", DateTime.ParseExact("2010-12-31", "yyyy-MM-dd", CultureInfo.InvariantCulture));
             var janeId = repository.AddSales(johnId, "Jane Doe", DateTime.ParseExact("2011-12-31", "yyyy-MM-dd", CultureInfo.InvariantCulture));

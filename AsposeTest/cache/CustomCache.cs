@@ -12,9 +12,9 @@ namespace AsposeTest.cache
     {
         Dictionary<long, T> _cache { get; set; } = new Dictionary<long, T>();
 
-        public void Add(long id, T wage)
+        public void Add(long id, T value)
         {
-            _cache.Add(id, wage);
+            _cache.Add(id, value);
         }
         public bool Get(long id, out T value)
         {
