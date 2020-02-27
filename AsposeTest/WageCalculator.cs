@@ -1,4 +1,5 @@
-﻿using AsposeTest.enums;
+﻿using AsposeTest.cache;
+using AsposeTest.enums;
 using System;
 using System.Linq;
 
@@ -7,14 +8,16 @@ namespace AsposeTest
     public class WageCalculator
     {
         private readonly IWorkersRepository _workersRepository;
-        public WageCalculator(IWorkersRepository workersRepository)
+        private readonly ICustomCache<decimal> _workerWageCache;
+        public WageCalculator(IWorkersRepository workersRepository, ICustomCache<decimal> workerWageCache)
         {
             _workersRepository = workersRepository;
+            _workerWageCache = workerWageCache;
         }
 
         public decimal GetFullWageSum(DateTime date)
         {
-            return _workersRepository.GetAll().Sum(worker => CalculateWorkersWage(date, worker));
+            return _workersRepository.GetAll().Sum(worker => CalculateWorkersWage(date, worker));//join _workerWageCache
         }
 
         public decimal GetWageOfWorker(long Id, DateTime date)
@@ -24,7 +27,14 @@ namespace AsposeTest
 
         public decimal CalculateWorkersWage(DateTime date, Worker worker)
         {
-            return GetWageWithExperience(date, worker) + getIncreaseForSubordinates(date, worker);
+            if (_workerWageCache.Get(worker.Id, out var value))
+            {
+                return value;
+            }
+                
+             value = GetWageWithExperience(date, worker) + getIncreaseForSubordinates(date, worker);
+            _workerWageCache.Add(worker.Id, value);
+            return value;
         }
 
         //TODO перенести

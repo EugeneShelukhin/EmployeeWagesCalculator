@@ -87,7 +87,6 @@ namespace AsposeTest
 
         public Worker[] GetSubordinatesOfAllLevels(long Id)
         {
-
             List<Worker> result = new List<Worker>();
             RecurcivelyGetSubordinates(Id, result);
             return result.Distinct().ToArray();
@@ -95,6 +94,7 @@ namespace AsposeTest
 
         private void RecurcivelyGetSubordinates(long Id, List<Worker> result)
         {
+
             var subordinates = _context.WorkersCollection.Where(w => w.ChiefId == Id).ToArray();
             if (subordinates == null)
                 return;
