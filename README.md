@@ -9,7 +9,7 @@ operations with DataContext are thread-safe on the repository level (with readwr
 
 calculation of wages is implemented with the decorator pattern. I don't insist that it was necessary, but the pattern is suitable for this purpose. 
 
-calculated workers wages are stored in a custom generic cache as well as previously founded subordinates. the cache 
+calculated workers wages are stored in a custom generic cache as well as previously founded subordinates. The cache resets every query.
 TODO: there is an assumption that it will work faster if use an ordered collection of subordinates instead of the cache of founded subordinates.
 Due to the cache usage the application uses a bit more memory but not significantly.
 
