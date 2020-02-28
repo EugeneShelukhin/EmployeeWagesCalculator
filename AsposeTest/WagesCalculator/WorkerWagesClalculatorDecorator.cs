@@ -5,9 +5,9 @@ using System.Text;
 
 namespace AsposeTest.WagesCalculatorDecorator
 {
-    public class WorkerWagesClalculator
+    public class WorkerWagesClalculatorDecorator
     {
-        public WorkerWagesClalculator(Worker worker)
+        public WorkerWagesClalculatorDecorator(Worker worker)
         {
             this.worker = worker;
         }
@@ -16,12 +16,11 @@ namespace AsposeTest.WagesCalculatorDecorator
             return worker.BasicWageRate;
         }
     }
-
    
-    public abstract class ClalculatorDecorator : WorkerWagesClalculator
+    public abstract class ClalculatorDecorator : WorkerWagesClalculatorDecorator
     {
-        protected WorkerWagesClalculator workerWagesClalculator;
-        public ClalculatorDecorator(Worker worker, WorkerWagesClalculator workerWagesClalculator) : base(worker)
+        protected WorkerWagesClalculatorDecorator workerWagesClalculator;
+        public ClalculatorDecorator(Worker worker, WorkerWagesClalculatorDecorator workerWagesClalculator) : base(worker)
         {
             this.workerWagesClalculator = workerWagesClalculator;
         }
@@ -29,7 +28,7 @@ namespace AsposeTest.WagesCalculatorDecorator
 
     public class EmploeeEncreaseForExperience : ClalculatorDecorator
     {
-        public EmploeeEncreaseForExperience(Worker worker, WorkerWagesClalculator workerWagesClalculator)
+        public EmploeeEncreaseForExperience(Worker worker, WorkerWagesClalculatorDecorator workerWagesClalculator)
             : base(worker, workerWagesClalculator)
         { }
 
@@ -45,7 +44,7 @@ namespace AsposeTest.WagesCalculatorDecorator
 
     public class ManagerEncreaseForExperience : ClalculatorDecorator
     {
-        public ManagerEncreaseForExperience(Worker worker, WorkerWagesClalculator workerWagesClalculator)
+        public ManagerEncreaseForExperience(Worker worker, WorkerWagesClalculatorDecorator workerWagesClalculator)
             : base(worker, workerWagesClalculator)
         { }
 
@@ -61,7 +60,7 @@ namespace AsposeTest.WagesCalculatorDecorator
 
     public class SalesEncreaseForExperience : ClalculatorDecorator
     {
-        public SalesEncreaseForExperience(Worker worker, WorkerWagesClalculator workerWagesClalculator)
+        public SalesEncreaseForExperience(Worker worker, WorkerWagesClalculatorDecorator workerWagesClalculator)
             : base(worker, workerWagesClalculator)
         { }
 
@@ -77,7 +76,7 @@ namespace AsposeTest.WagesCalculatorDecorator
 
     public class EmploeeEncreaseForSubordinates : ClalculatorDecorator
     {
-        public EmploeeEncreaseForSubordinates(Worker worker, WorkerWagesClalculator workerWagesClalculator)
+        public EmploeeEncreaseForSubordinates(Worker worker, WorkerWagesClalculatorDecorator workerWagesClalculator)
             : base(worker, workerWagesClalculator)
         { }
 
@@ -92,7 +91,7 @@ namespace AsposeTest.WagesCalculatorDecorator
         private readonly IWorkersRepository _workersRepository;
         private readonly IWagesCalculator _wagesCalculator;
         public ManagerEncreaseForSubordinates(Worker worker, 
-            WorkerWagesClalculator workerWagesClalculator, 
+            WorkerWagesClalculatorDecorator workerWagesClalculator, 
             IWorkersRepository workersRepository,
             IWagesCalculator wagesCalculator)
             : base(worker, workerWagesClalculator)
@@ -116,7 +115,7 @@ namespace AsposeTest.WagesCalculatorDecorator
     {
         private readonly IWorkersRepository _workersRepository;
         private readonly IWagesCalculator _wagesCalculator;
-        public SalesEncreaseForSubordinates(Worker worker, WorkerWagesClalculator workerWagesClalculator, 
+        public SalesEncreaseForSubordinates(Worker worker, WorkerWagesClalculatorDecorator workerWagesClalculator, 
             IWorkersRepository workersRepository,
             IWagesCalculator wagesCalculator)
             : base(worker, workerWagesClalculator)

@@ -6,7 +6,7 @@ namespace AsposeTest.data
 {
     public interface IDataContext
     {
-        List<Worker> WorkersCollection { get; set; }//TODO List to concurrent dictionary
+        List<Worker> WorkersCollection { get; set; }
     }
 
     public class DataContext : IDataContext

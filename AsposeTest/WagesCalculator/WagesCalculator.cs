@@ -45,7 +45,7 @@ namespace AsposeTest
             {
                 case RolesEnum.Employee:
                     {
-                        var calc = new WorkerWagesClalculator(worker);
+                        var calc = new WorkerWagesClalculatorDecorator(worker);
                         calc = new EmploeeEncreaseForExperience(worker, calc);
                         calc = new EmploeeEncreaseForSubordinates(worker, calc);
                         value = calc.GetWages(date);
@@ -53,7 +53,7 @@ namespace AsposeTest
                     }
                 case RolesEnum.Manager:
                     {
-                        var calc = new WorkerWagesClalculator(worker);
+                        var calc = new WorkerWagesClalculatorDecorator(worker);
                         calc = new ManagerEncreaseForExperience(worker, calc);
                         calc = new ManagerEncreaseForSubordinates(worker, calc, _workersRepository, this);
                         value = calc.GetWages(date);
@@ -62,7 +62,7 @@ namespace AsposeTest
 
                 case RolesEnum.Sales:
                     {
-                        var calc = new WorkerWagesClalculator(worker);
+                        var calc = new WorkerWagesClalculatorDecorator(worker);
                         calc = new SalesEncreaseForExperience(worker, calc);
                         calc = new SalesEncreaseForSubordinates(worker, calc, _workersRepository, this);
                         value = calc.GetWages(date);
