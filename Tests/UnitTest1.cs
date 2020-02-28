@@ -23,13 +23,28 @@ namespace Tests
             var date = DateTime.ParseExact("2020-02-24", "yyyy-MM-dd", CultureInfo.InvariantCulture);
             var workers = repository.GetAll();
             //act
-            var wageCalculator = new WageCalculator(base.repository, new CustomCache<decimal>());
-            var oneByOneSum=workers.Sum(worker => wageCalculator.CalculateWorkersWage(date, worker));
-            var fullWageSum = wageCalculator.GetFullWageSum(date);
+            var wageCalculator = new WagesCalculator(base.repository, new CustomCache<decimal>());
+            var oneByOneSum=workers.Sum(worker => wageCalculator.CalculateWorkersWages(date, worker));
+            var fullWageSum = wageCalculator.GetTotalWagesSum(date);
 
             //assert
             Assert.That(oneByOneSum, Is.EqualTo(fullWageSum));
             Assert.That(Math.Round(oneByOneSum, 2),  Is.EqualTo(825155.03));
+        }
+
+
+        public void GetWagesForEmployee() { 
+        
+        }
+
+        public void GetWagesForManager()
+        {
+
+        }
+
+        public void GetWagesForSales()
+        {
+
         }
     }
 }

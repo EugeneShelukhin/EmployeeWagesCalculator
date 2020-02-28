@@ -35,8 +35,8 @@ namespace AsposeTest
             var date = DateTime.ParseExact("2020-02-24", "yyyy-MM-dd", CultureInfo.InvariantCulture);
             var workers = repository.GetAll();
             var workerWagesCache = new CustomCache<decimal>();
-            var wageCalculator = new WageCalculator(repository, workerWagesCache);
-            var fullWageSum = wageCalculator.GetFullWageSum(date);//4126261777.51122500000000M
+            var wageCalculator = new WagesCalculator(repository, workerWagesCache);
+            var fullWageSum = wageCalculator.GetTotalWagesSum(date);//4126261777.51122500000000M
         }
     }
 }
