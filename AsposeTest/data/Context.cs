@@ -11,7 +11,24 @@ namespace AsposeTest.data
 
     public class DataContext : IDataContext
     {
-        public DataContext() => WorkersCollection = new List<Worker>();
+        private DataContext() => WorkersCollection = new List<Worker>();
+
+        private static DataContext instance = null;
+        private static readonly object threadlock = new object();
+
+        public static DataContext Instance
+        {
+            get
+            {
+
+                lock (threadlock)
+                {
+                    return instance ??= new DataContext();
+                }
+            }
+        }
+
+
 
         public List<Worker> WorkersCollection { get; set; }
     }

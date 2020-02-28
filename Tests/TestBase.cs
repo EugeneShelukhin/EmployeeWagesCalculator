@@ -13,7 +13,7 @@ namespace Tests
         protected readonly IWorkersRepository repository;
         public TestBase()
         {
-            dataContext = new DataContext();
+            dataContext = DataContext.Instance;
             idCounter = new IdentifiersCounter(dataContext);
             var subordinatesCache = new CustomCache<Worker[]>();
             repository = new WorkersRepository(dataContext, idCounter, subordinatesCache);

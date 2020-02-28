@@ -11,7 +11,7 @@ namespace AsposeTest
         {
 
             //deep hierarchy
-            var dataContext = new DataContext();
+            var dataContext = DataContext.Instance;
             var idCounter = new IdentifiersCounter(dataContext);
             var subordinatesCache = new CustomCache<Worker[]>();
             var repository = new WorkersRepository(dataContext, idCounter, subordinatesCache);
