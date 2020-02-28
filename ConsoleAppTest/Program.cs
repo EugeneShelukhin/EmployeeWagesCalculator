@@ -1,15 +1,15 @@
-﻿using AsposeTest.cache;
+﻿using AsposeTest;
+using AsposeTest.cache;
 using AsposeTest.data;
 using System;
 using System.Globalization;
 
-namespace AsposeTest
+namespace ConsoleAppTest
 {
     class Program
     {
         static void Main(string[] args)
         {
-
             //deep hierarchy
             var dataContext = DataContext.Instance;
             var idCounter = new IdentifiersCounter(dataContext);
