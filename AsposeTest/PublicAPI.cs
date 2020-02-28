@@ -10,15 +10,53 @@ namespace AsposeTest
         /// <summary>
         /// Add Worker with role Employee
         /// </summary>
-        /// <param name="chiefId"></param>
-        /// <param name="name"></param>
-        /// <param name="emploumentDate"></param>
-        /// <returns></returns>
+        /// <param name="chiefId">Chef's id</param>
+        /// <param name="name">worker's name</param>
+        /// <param name="emploumentDate">date of employment</param>
+        /// <returns>new worker's id</returns>
         long AddEmployee(long? chiefId, string name, DateTime? emploumentDate);
+
+        /// <summary>
+        /// Add Worker with role Manager
+        /// </summary>
+        /// <param name="chiefId">Chef's id</param>
+        /// <param name="name">worker's name</param>
+        /// <param name="emploumentDate">date of employment</param>
+        /// <param name="subordinates">List of ids of subordinates of the 1st level</param>
+        /// <returns>new worker's id</returns>
         long AddManager(long? chiefId, string name, DateTime? emploumentDate, long[] subordinates = null);
+
+        /// <summary>
+        /// Add Worker with role Sales
+        /// </summary>
+        /// <param name="chiefId">Chef's id</param>
+        /// <param name="name">worker's name</param>
+        /// <param name="emploumentDate">date of employment</param>
+        /// <param name="subordinates">List of ids of subordinates of the 1st level</param>
+        /// <returns>new worker's id</returns>
         long AddSales(long? chiefId, string name, DateTime? emploumentDate, long[] subordinates = null);
+
+        /// <summary>
+        /// Calculate worker's wages by worker id
+        /// </summary>
+        /// <param name="date">date of wages withdrawal</param>
+        /// <param name="workerId">worker's id</param>
+        /// <returns>worker's wages value</returns>
         decimal CalculateWorkersWages(DateTime date, long workerId);
+
+        /// <summary>
+        /// Calculate worker's wages by worker data model
+        /// </summary>
+        /// <param name="date">date of wages withdrawal</param>
+        /// <param name="worker">worker model</param>
+        /// <returns>worker's wages value</returns>
         decimal CalculateWorkersWages(DateTime date, Worker worker);
+
+        /// <summary>
+        /// Calculate total sum of wages of all workers in company
+        /// </summary>
+        /// <param name="date">date of wages withdrawal</param>
+        /// <returns>Total sum</returns>
         decimal GetTotalWagesSum(DateTime date);
     }
 
