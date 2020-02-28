@@ -1,6 +1,6 @@
 The solution consists of 3 projects:
-AsposTest - target class library 
-Tests - Nunit test projects
+AsposTest - target class library; 
+Tests - Nunit test projects;
 ConsoleAppTest - dummy console project with an example of usage of AsposeTestClassLibrary.
 
 Workers collection is wrapped into DataContext class in order to the possibility of substitution with real database data context.
