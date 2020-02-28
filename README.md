@@ -14,11 +14,10 @@ TODO: there is an assumption that it will work faster if use an ordered collecti
 Due to the cache usage the application uses a bit more memory but not significantly.
 
 Known issues:
-there is no tracking of the history of hiring and firing workers so calculation for past dates may be inaccurate
-no check of constraint that employee can't have subordinates
-there is no logging in the code
-internal implementation is exposed as public because I use interfaces and interfaces require public methods and properties
-
+there is no tracking of the history of hiring and firing workers so calculation for past dates may be inaccurate.
+No check of constraint that employee can't have subordinates.
+There is no logging in the code.
+Internal implementation is exposed as public because I use interfaces and interfaces require public methods and properties.
 
 Performance test:
 on a sample from ConsoleAppTest TotalSum calculation takes 5.5 seconds and 28Mb of memory. (12 cores cpu).
