@@ -11,9 +11,9 @@ namespace AsposeTest
 
     public class IdentifiersCounter : IIdentifiersCounter
     {
-        public IdentifiersCounter(IDataContext context)
+        public IdentifiersCounter(long startFrom=0)
         {
-            counter = context.WorkersCollection.Count > 0 ? context.WorkersCollection.Max(w => w.Id) : 0;
+            counter = startFrom;
         }
 
         private long counter;

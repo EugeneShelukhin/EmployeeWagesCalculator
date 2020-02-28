@@ -22,13 +22,12 @@ namespace AsposeTest
     public class WorkersRepository : IWorkersRepository
     {
         private readonly IDataContext _context;
-        private readonly IIdentifiersCounter _identifiersCounter;
+        
         private readonly ICustomCache<Worker[]> _subordinatesCache;
         private ReaderWriterLockSlim RWLock = new ReaderWriterLockSlim();
-        public WorkersRepository(IDataContext context, IIdentifiersCounter identifiersCounter, ICustomCache<Worker[]> subordinatesCache)
+        public WorkersRepository(IDataContext context, ICustomCache<Worker[]> subordinatesCache)
         {
             _context = context;
-            _identifiersCounter = identifiersCounter;
             _subordinatesCache = subordinatesCache;
         }
 
@@ -38,17 +37,14 @@ namespace AsposeTest
             RWLock.EnterWriteLock();
             try
             {
-                var id = _identifiersCounter.IssueNewIdentifier();
-                _context.WorkersCollection.Add(new Worker()
+                return _context.Add(new Worker()
                 {
-                    Id = id,
                     ChiefId = chiefId,
                     Name = name,
                     Role = RolesEnum.Employee,
                     BasicWageRate = WageRates.BaseWage,
                     DateOfEmployment = emploumentDate ?? DateTime.Now
                 });
-                return id;
             }
             finally
             {
@@ -61,10 +57,8 @@ namespace AsposeTest
             RWLock.EnterWriteLock();
             try
             {
-                var id = _identifiersCounter.IssueNewIdentifier();
-                _context.WorkersCollection.Add(new Worker()
+                var id = _context.Add(new Worker()
                 {
-                    Id = id,
                     ChiefId = chiefId,
                     Name = name,
                     Role = RolesEnum.Manager,
@@ -89,10 +83,8 @@ namespace AsposeTest
             RWLock.EnterWriteLock();
             try
             {
-                var id = _identifiersCounter.IssueNewIdentifier();
-                _context.WorkersCollection.Add(new Worker()
+                var id = _context.Add(new Worker()
                 {
-                    Id = id,
                     ChiefId = chiefId,
                     Name = name,
                     Role = RolesEnum.Sales,

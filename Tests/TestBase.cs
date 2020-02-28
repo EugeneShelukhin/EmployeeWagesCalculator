@@ -9,14 +9,18 @@ namespace Tests
     public abstract class TestBase
     {
         private readonly IDataContext dataContext;
-        private readonly IIdentifiersCounter idCounter;
         protected readonly IWorkersRepository repository;
+        private static bool isLoaded;
         public TestBase()
         {
             dataContext = DataContext.Instance;
-            idCounter = new IdentifiersCounter(dataContext);
             var subordinatesCache = new CustomCache<Worker[]>();
-            repository = new WorkersRepository(dataContext, idCounter, subordinatesCache);
+            repository = new WorkersRepository(dataContext, subordinatesCache);
+            if (!isLoaded)
+            {
+                LoadWorkers();
+                isLoaded = true;
+            }
         }
 
         public long johnId;
@@ -25,8 +29,7 @@ namespace Tests
         public long jamesId;
         public long piterId;
 
-
-        public void LoadWorkers()
+        private void LoadWorkers()
         {
             johnId = repository.AddManager(null, "John Doe", DateTime.ParseExact("2010-12-31", "yyyy-MM-dd", CultureInfo.InvariantCulture));
             janeId = repository.AddSales(johnId, "Jane Doe", DateTime.ParseExact("2011-12-31", "yyyy-MM-dd", CultureInfo.InvariantCulture));
