@@ -4,8 +4,8 @@ Tests - Nunit test projects;
 ConsoleAppTest - dummy console project with an example of usage of AsposeTestClassLibrary.
 
 Workers collection is wrapped into DataContext class in order to the possibility of substitution with real database data context.
-DataContext defined as a singleton to avoid duplications of data contexts
-operations with DataContext are thread-safe on the repository level (with readwritelockslim)
+DataContext defined as a singleton to avoid duplications of data contexts.
+Operations with DataContext are thread-safe on the repository level (with readwritelockslim)
 
 Calculation of wages is implemented with the decorator pattern. I don't insist that it was necessary, but the pattern is suitable for this purpose. 
 
