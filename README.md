@@ -5,7 +5,7 @@ ConsoleAppTest - dummy console project with an example of usage of AsposeTestCla
 
 Workers collection is wrapped into DataContext class in order to the possibility of substitution with real database data context.
 DataContext defined as a singleton to avoid duplications of data contexts.
-Operations with DataContext are thread-safe on the repository level (with readwritelockslim)
+Operations with DataContext are thread-safe on the repository level
 Besides workers collection, there is a subordinates collection, the purpose of which is a quick search for subordinates.
 For a complete list of subordinates a function runs recursively so StackOverflow exception may be thrown if worker's hierarchy is very deep.   
 

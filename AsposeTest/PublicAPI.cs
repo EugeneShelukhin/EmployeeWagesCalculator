@@ -1,5 +1,4 @@
 ﻿using AsposeTest.cache;
-using AsposeTest.core;
 using AsposeTest.data;
 using System;
 
@@ -62,38 +61,43 @@ namespace AsposeTest
 
     public class PublicAPI : IPublicAPI
     {
-        private readonly ISimpleResolver _resolver;
-        public PublicAPI() {
-            _resolver = new SimpleResolver();
+        private readonly IWorkersRepository _repository;
+        public PublicAPI()
+        {
+            var dataContext = DataContext.Instance;
+            _repository = new WorkersRepository(dataContext);
         }
 
         public long AddEmployee(long? chiefId, string name, DateTime? emploumentDate)
         {
-            return _resolver.ResolveRepository().AddEmployee(chiefId, name, emploumentDate);
+            return _repository.AddEmployee(chiefId, name, emploumentDate);
         }
 
         public long AddManager(long? chiefId, string name, DateTime? emploumentDate, long[] subordinates = null)
         {
-            return _resolver.ResolveRepository().AddManager(chiefId, name, emploumentDate, subordinates);
+            return _repository.AddManager(chiefId, name, emploumentDate, subordinates);
         }
 
         public long AddSales(long? chiefId, string name, DateTime? emploumentDate, long[] subordinates = null)
         {
-            return _resolver.ResolveRepository().AddSales(chiefId, name, emploumentDate, subordinates);
+            return _repository.AddSales(chiefId, name, emploumentDate, subordinates);
         }
         public decimal CalculateWorkersWages(DateTime date, long workerId)
         {
-            return _resolver.ResolveWagesCalculator().CalculateWorkersWages(date, workerId);
+            var workerWagesCache = new CustomCache<decimal>();
+            return new WagesCalculator(_repository, workerWagesCache).CalculateWorkersWages(date, workerId);
         }
         public decimal CalculateWorkersWages(DateTime date, Worker worker)
         {
-            return _resolver.ResolveWagesCalculator().CalculateWorkersWages(date, worker);
+            var workerWagesCache = new CustomCache<decimal>();
+            return new WagesCalculator(_repository, workerWagesCache).CalculateWorkersWages(date, worker);
         }
         public decimal GetTotalWagesSum(DateTime date)
         {
-            return _resolver.ResolveWagesCalculator().GetTotalWagesSum(date);
+            var workerWagesCache = new CustomCache<decimal>();
+            return new WagesCalculator(_repository, workerWagesCache).GetTotalWagesSum(date);
         }
 
-        
+
     }
 }
