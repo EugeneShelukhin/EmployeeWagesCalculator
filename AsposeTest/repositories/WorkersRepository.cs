@@ -22,7 +22,8 @@ namespace AsposeTest
     public class WorkersRepository : IWorkersRepository
     {
         private readonly IDataContext _context;
-        
+        private static object _lockObj = new object();
+
         public WorkersRepository(IDataContext context)
         {
             _context = context;
@@ -31,8 +32,7 @@ namespace AsposeTest
 
         public long AddEmployee(long? chiefId, string name, DateTime? emploumentDate)
         {
-            _context.RWLock.EnterWriteLock();
-            try
+            lock (_lockObj)
             {
                 return _context.Add(new Worker()
                 {
@@ -43,16 +43,11 @@ namespace AsposeTest
                     DateOfEmployment = emploumentDate ?? DateTime.Now
                 });
             }
-            finally
-            {
-                _context.RWLock.ExitWriteLock();
-            }
         }
 
         public long AddManager(long? chiefId, string name, DateTime? emploumentDate, long[] subordinates = null)
         {
-            _context.RWLock.EnterWriteLock();
-            try
+            lock (_lockObj)
             {
                 var id = _context.Add(new Worker()
                 {
@@ -69,16 +64,11 @@ namespace AsposeTest
 
                 return id;
             }
-            finally
-            {
-                _context.RWLock.ExitWriteLock();
-            }
         }
 
         public long AddSales(long? chiefId, string name, DateTime? emploumentDate, long[] subordinates = null)
         {
-            _context.RWLock.EnterWriteLock();
-            try
+            lock (_lockObj)
             {
                 var id = _context.Add(new Worker()
                 {
@@ -94,51 +84,37 @@ namespace AsposeTest
                 //TODO inject calculate wage logic
                 return id;
             }
-            finally
-            {
-                _context.RWLock.ExitWriteLock();
-            }
         }
 
-        public IEnumerable<Worker> GetAll() => _context.WorkersCollection;
+        public IEnumerable<Worker> GetAll() {
+            lock (_lockObj)
+            {
+                return _context.WorkersCollection.ToArray();
+            }
+        }
         public Worker GetById(long id)
         {
-            _context.RWLock.EnterReadLock();
-            try
+            lock (_lockObj)
             {
                 return _context.WorkersCollection.First(worker => worker.Id == id);
-            }
-            finally
-            {
-                _context.RWLock.ExitReadLock();
             }
         }
         public List<Worker> GetSubordinatesOfFirstLevel(long id)
         {
-            _context.RWLock.EnterReadLock();
-            try
+            lock (_lockObj)
             {
                 _context.SubordinatesCache.TryGetValue(id, out var subordinates);
                 return subordinates ?? new List<Worker>();
-            }
-            finally
-            {
-                _context.RWLock.ExitReadLock();
             }
         }
 
         public List<Worker> GetSubordinatesOfAllLevels(long Id)
         {
-            _context.RWLock.EnterReadLock();
-            try
+            lock (_lockObj)
             {
                 List<Worker> result = new List<Worker>();
                 RecurcivelyGetSubordinates(Id, result);
                 return result;//.Distinct();
-            }
-            finally
-            {
-                _context.RWLock.ExitReadLock();
             }
         }
 
