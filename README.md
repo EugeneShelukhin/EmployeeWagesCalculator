@@ -6,11 +6,12 @@ ConsoleAppTest - dummy console project with an example of usage of AsposeTestCla
 Workers collection is wrapped into DataContext class in order to the possibility of substitution with real database data context.
 DataContext defined as a singleton to avoid duplications of data contexts.
 Operations with DataContext are thread-safe on the repository level (with readwritelockslim)
+Besides workers collection, there is a subordinates collection, the purpose of which is a quick search for subordinates.
+For a complete list of subordinates a function runs recursively so StackOverflow exception may be thrown if worker's hierarchy is very deep.   
 
 Calculation of wages is implemented with the decorator pattern. I don't insist that it was necessary, but the pattern is suitable for this purpose. 
 
-Calculated workers wages are stored in a custom generic cache as well as previously founded subordinates. The cache resets every request.
-TODO: there is an assumption that it will work faster if use an ordered collection of subordinates instead of the cache of founded subordinates.
+Calculated workers wages are stored in a custom generic cache. The cache resets every request.
 Due to the cache usage the application uses a bit more memory but not significantly.
 
 Known issues:
