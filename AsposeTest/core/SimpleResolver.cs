@@ -1,8 +1,5 @@
 ﻿using AsposeTest.cache;
 using AsposeTest.data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AsposeTest.core
 {
@@ -18,8 +15,7 @@ namespace AsposeTest.core
         public WorkersRepository ResolveRepository()
         {
             var dataContext = DataContext.Instance;
-            var subordinatesCache = new CustomCache<Worker[]>();
-            return new WorkersRepository(dataContext, subordinatesCache);
+            return new WorkersRepository(dataContext);
         }
 
         public WagesCalculator ResolveWagesCalculator()

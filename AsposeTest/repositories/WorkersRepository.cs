@@ -15,20 +15,17 @@ namespace AsposeTest
         long AddSales(long? chiefId, string name, DateTime? emploumentDate, long[] subordinates = null);
         IEnumerable<Worker> GetAll();
         Worker GetById(long id);
-        Worker[] GetSubordinatesOfAllLevels(long Id);
-        Worker[] GetSubordinatesOfFirstLevel(long Id);
+        List<Worker> GetSubordinatesOfAllLevels(long Id);
+        List<Worker> GetSubordinatesOfFirstLevel(long Id);
     }
 
     public class WorkersRepository : IWorkersRepository
     {
         private readonly IDataContext _context;
-        
-        private readonly ICustomCache<Worker[]> _subordinatesCache;
         private ReaderWriterLockSlim RWLock = new ReaderWriterLockSlim();
-        public WorkersRepository(IDataContext context, ICustomCache<Worker[]> subordinatesCache)
+        public WorkersRepository(IDataContext context)
         {
             _context = context;
-            _subordinatesCache = subordinatesCache;
         }
 
 
@@ -116,32 +113,29 @@ namespace AsposeTest
                 RWLock.ExitReadLock();
             }
         }
-        public Worker[] GetSubordinatesOfFirstLevel(long id)
+        public List<Worker> GetSubordinatesOfFirstLevel(long id)
         {
-            if (!_subordinatesCache.Get(id, out var subordinates))
+            RWLock.EnterReadLock();
+            try
             {
-                RWLock.EnterReadLock();
-                try
-                {
-                    subordinates = _context.WorkersCollection.Where(w => w.ChiefId == id).ToArray();
-                    _subordinatesCache.Add(id, subordinates);
-                }
-                finally
-                {
-                    RWLock.ExitReadLock();
-                }
+                _context.SubordinatesCache.TryGetValue(id, out var subordinates);
+                return subordinates ?? new List<Worker>();
             }
-            return subordinates;
+            finally
+            {
+                RWLock.ExitReadLock();
+            }
         }
 
-        public Worker[] GetSubordinatesOfAllLevels(long Id)
+        public 
+            List<Worker> GetSubordinatesOfAllLevels(long Id)
         {
             RWLock.EnterReadLock();
             try
             {
                 List<Worker> result = new List<Worker>();
                 RecurcivelyGetSubordinates(Id, result);
-                return result.Distinct().ToArray();
+                return result;//.Distinct();
             }
             finally
             {
@@ -151,13 +145,7 @@ namespace AsposeTest
 
         private void RecurcivelyGetSubordinates(long id, List<Worker> result)
         {
-            if (!_subordinatesCache.Get(id, out var subordinates))
-            {
-                subordinates = _context.WorkersCollection.Where(w => w.ChiefId == id).ToArray();
-                _subordinatesCache.Add(id, subordinates);
-            }
-
-            if (subordinates == null)
+            if (!_context.SubordinatesCache.TryGetValue(id, out var subordinates))
             {
                 return;
             }

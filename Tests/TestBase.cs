@@ -14,8 +14,7 @@ namespace Tests
         public TestBase()
         {
             dataContext = DataContext.Instance;
-            var subordinatesCache = new CustomCache<Worker[]>();
-            repository = new WorkersRepository(dataContext, subordinatesCache);
+            repository = new WorkersRepository(dataContext);
             if (!isLoaded)
             {
                 LoadWorkers();
