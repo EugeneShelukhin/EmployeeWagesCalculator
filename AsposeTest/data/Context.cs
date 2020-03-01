@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 
 namespace AsposeTest.data
 {
@@ -7,6 +8,7 @@ namespace AsposeTest.data
     {
         List<Worker> WorkersCollection { get; }
         Dictionary<long, List<Worker>> SubordinatesCache { get; }
+        ReaderWriterLockSlim RWLock { get; }
         long Add(Worker worker);
     }
 
@@ -21,22 +23,24 @@ namespace AsposeTest.data
 
         private static DataContext instance = null;
         private readonly IIdentifiersCounter _identifiersCounter;
-        private static readonly object threadlock = new object();
+        private static readonly object Singletonlock = new object();
 
         public static DataContext Instance
         {
             get
             {
 
-                lock (threadlock)
+                lock (Singletonlock)
                 {
                     return instance ??= new DataContext();
                 }
             }
         }
 
+
         public List<Worker> WorkersCollection { get; }
         public Dictionary<long, List<Worker>> SubordinatesCache { get; }
+        public ReaderWriterLockSlim RWLock { get; } = new ReaderWriterLockSlim();
         public long Add(Worker worker)
         {
             var id = _identifiersCounter.IssueNewIdentifier();
@@ -63,6 +67,11 @@ namespace AsposeTest.data
                 SubordinatesCache.Add(worker.ChiefId.Value, new List<Worker>() { worker });
             }
 
+        }
+
+        ~DataContext()
+        {
+            if (RWLock != null) RWLock.Dispose();
         }
     }
 }

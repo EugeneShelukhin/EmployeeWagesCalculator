@@ -22,7 +22,7 @@ namespace AsposeTest
     public class WorkersRepository : IWorkersRepository
     {
         private readonly IDataContext _context;
-        private ReaderWriterLockSlim RWLock = new ReaderWriterLockSlim();
+        
         public WorkersRepository(IDataContext context)
         {
             _context = context;
@@ -31,7 +31,7 @@ namespace AsposeTest
 
         public long AddEmployee(long? chiefId, string name, DateTime? emploumentDate)
         {
-            RWLock.EnterWriteLock();
+            _context.RWLock.EnterWriteLock();
             try
             {
                 return _context.Add(new Worker()
@@ -45,13 +45,13 @@ namespace AsposeTest
             }
             finally
             {
-                RWLock.ExitWriteLock();
+                _context.RWLock.ExitWriteLock();
             }
         }
 
         public long AddManager(long? chiefId, string name, DateTime? emploumentDate, long[] subordinates = null)
         {
-            RWLock.EnterWriteLock();
+            _context.RWLock.EnterWriteLock();
             try
             {
                 var id = _context.Add(new Worker()
@@ -71,13 +71,13 @@ namespace AsposeTest
             }
             finally
             {
-                RWLock.ExitWriteLock();
+                _context.RWLock.ExitWriteLock();
             }
         }
 
         public long AddSales(long? chiefId, string name, DateTime? emploumentDate, long[] subordinates = null)
         {
-            RWLock.EnterWriteLock();
+            _context.RWLock.EnterWriteLock();
             try
             {
                 var id = _context.Add(new Worker()
@@ -96,26 +96,26 @@ namespace AsposeTest
             }
             finally
             {
-                RWLock.ExitWriteLock();
+                _context.RWLock.ExitWriteLock();
             }
         }
 
         public IEnumerable<Worker> GetAll() => _context.WorkersCollection;
         public Worker GetById(long id)
         {
-            RWLock.EnterReadLock();
+            _context.RWLock.EnterReadLock();
             try
             {
                 return _context.WorkersCollection.First(worker => worker.Id == id);
             }
             finally
             {
-                RWLock.ExitReadLock();
+                _context.RWLock.ExitReadLock();
             }
         }
         public List<Worker> GetSubordinatesOfFirstLevel(long id)
         {
-            RWLock.EnterReadLock();
+            _context.RWLock.EnterReadLock();
             try
             {
                 _context.SubordinatesCache.TryGetValue(id, out var subordinates);
@@ -123,14 +123,13 @@ namespace AsposeTest
             }
             finally
             {
-                RWLock.ExitReadLock();
+                _context.RWLock.ExitReadLock();
             }
         }
 
-        public 
-            List<Worker> GetSubordinatesOfAllLevels(long Id)
+        public List<Worker> GetSubordinatesOfAllLevels(long Id)
         {
-            RWLock.EnterReadLock();
+            _context.RWLock.EnterReadLock();
             try
             {
                 List<Worker> result = new List<Worker>();
@@ -139,7 +138,7 @@ namespace AsposeTest
             }
             finally
             {
-                RWLock.ExitReadLock();
+                _context.RWLock.ExitReadLock();
             }
         }
 
@@ -155,10 +154,6 @@ namespace AsposeTest
                 RecurcivelyGetSubordinates(s.Id, result);
             }
             result.AddRange(subordinates);
-        }
-        ~WorkersRepository()
-        {
-            if (RWLock != null) RWLock.Dispose();
         }
     }
 }
