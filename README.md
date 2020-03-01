@@ -21,4 +21,5 @@ There is no logging in the code.
 Internal implementation is exposed as public because I use interfaces and interfaces require public methods and properties.
 
 Performance test:
-on a sample from ConsoleAppTest TotalSum calculation takes 5.5 seconds and 28Mb of memory. (12 cores cpu).
+on a sample from ConsoleAppTest TotalSum calculation takes 9.7 seconds and 45Mb of memory on my machine. 
+(insertion of 35 000 workers, 20 parallel calculations of total company wages).
